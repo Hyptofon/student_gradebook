@@ -39,15 +39,29 @@ class _SubjectDetailsScreenState extends State<SubjectDetailsScreen> {
       return;
     }
 
-    context.read<GradebookProvider>().addGrade(subject.id, formData);
+    final added = context.read<GradebookProvider>().addGrade(
+      subject.id,
+      formData,
+    );
+    if (!added) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text(AppStrings.gradeAddFailed)));
+    }
   }
 
   void _deleteGrade(int subjectId, int gradeId) {
-    context.read<GradebookProvider>().deleteGrade(subjectId, gradeId);
+    final deleted = context.read<GradebookProvider>().deleteGrade(
+      subjectId,
+      gradeId,
+    );
 
+    final message = deleted
+        ? AppStrings.gradeDeleted
+        : AppStrings.gradeDeleteFailed;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text(AppStrings.gradeDeleted)));
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   List<Grade> _getFilteredAndSortedGrades(Subject subject) {
@@ -69,10 +83,17 @@ class _SubjectDetailsScreenState extends State<SubjectDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<GradebookProvider>();
-    final subject = provider.subjects.firstWhere(
-      (s) => s.id == widget.subject.id,
-      orElse: () => widget.subject,
-    );
+    final subject = provider.subjectById(widget.subject.id);
+
+    if (subject == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text(AppStrings.subjectNotFound)),
+        body: const EmptyStateWidget(
+          message: AppStrings.subjectNotFound,
+          subMessage: AppStrings.returnToSubjects,
+        ),
+      );
+    }
 
     final grades = _getFilteredAndSortedGrades(subject);
 

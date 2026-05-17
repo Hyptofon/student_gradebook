@@ -22,8 +22,12 @@ class AppStrings {
   static const tapPlusToAdd = 'Tap + to add';
   static const noGradesFound = 'No grades found';
   static const changeFiltersOrAdd = 'Change filters or tap + to add';
+  static const subjectNotFound = 'Subject not found';
+  static const returnToSubjects = 'Return to the subjects list';
 
   static const gradeDeleted = 'Grade deleted';
+  static const gradeDeleteFailed = 'Could not delete grade';
+  static const gradeAddFailed = 'Could not add grade';
   static const statusAll = 'Status: All';
   static const typeAll = 'Type: All';
   static const sortNewest = 'Sort: Newest';

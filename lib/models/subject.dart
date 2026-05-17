@@ -15,7 +15,7 @@ class Subject {
     List<Grade> grades = const [],
   }) : name = _validateString(name, fieldName: 'Name'),
        icon = _validateString(icon, fieldName: 'Icon'),
-       _grades = List.from(grades);
+       _grades = List.unmodifiable(grades);
 
   static String _validateString(String value, {required String fieldName}) {
     final trimmedValue = value.trim();
@@ -50,11 +50,12 @@ class Subject {
     };
   }
 
-  void addGrade(Grade grade) {
-    _grades.add(grade);
-  }
-
-  void removeGrade(int id) {
-    _grades.removeWhere((g) => g.id == id);
+  Subject copyWith({String? name, String? icon, List<Grade>? grades}) {
+    return Subject(
+      id: id,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+      grades: grades ?? _grades,
+    );
   }
 }

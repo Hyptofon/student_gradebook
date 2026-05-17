@@ -49,34 +49,36 @@ class _AddSubjectDialogState extends State<AddSubjectDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text(AppStrings.addSubject),
-      content: Form(
-        key: _formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: AppStrings.subjectName,
+      content: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: AppStrings.subjectName,
+                ),
+                textInputAction: TextInputAction.next,
+                validator: (value) =>
+                    Validators.required(value, fieldName: 'Name'),
               ),
-              textInputAction: TextInputAction.next,
-              validator: (value) =>
-                  Validators.required(value, fieldName: 'Name'),
-            ),
-            const SizedBox(height: AppDimensions.spacing16),
-            TextFormField(
-              controller: _iconController,
-              decoration: const InputDecoration(
-                labelText: AppStrings.iconEmoji,
-                hintText: SeedConstants.defaultSubjectIcon,
+              const SizedBox(height: AppDimensions.spacing16),
+              TextFormField(
+                controller: _iconController,
+                decoration: const InputDecoration(
+                  labelText: AppStrings.iconEmoji,
+                  hintText: SeedConstants.defaultSubjectIcon,
+                ),
+                textInputAction: TextInputAction.done,
+                validator: (value) =>
+                    Validators.required(value, fieldName: 'Icon'),
+                onFieldSubmitted: (_) => _submit(),
               ),
-              textInputAction: TextInputAction.done,
-              validator: (value) =>
-                  Validators.required(value, fieldName: 'Icon'),
-              onFieldSubmitted: (_) => _submit(),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [

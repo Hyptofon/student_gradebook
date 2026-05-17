@@ -28,6 +28,14 @@ class GradebookProvider extends ChangeNotifier {
 
   List<Subject> get subjects => List.unmodifiable(_subjects);
 
+  Subject? subjectById(int subjectId) {
+    final index = _findSubjectIndex(subjectId);
+    if (index == -1) {
+      return null;
+    }
+    return _subjects[index];
+  }
+
   AverageSummary get overallSummary =>
       GradebookStatisticsService.calculateOverallSummary(_subjects);
 
@@ -63,23 +71,49 @@ class GradebookProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addGrade(int subjectId, GradeFormData formData) {
-    final subject = _subjects.firstWhere((s) => s.id == subjectId);
-    subject.addGrade(
-      Grade(
-        id: IdGenerator.generate(),
-        score: formData.score,
-        type: formData.type,
-        description: formData.description,
-        date: formData.date,
-      ),
+  bool addGrade(int subjectId, GradeFormData formData) {
+    final subjectIndex = _findSubjectIndex(subjectId);
+    if (subjectIndex == -1) {
+      return false;
+    }
+
+    final subject = _subjects[subjectIndex];
+    final grade = Grade(
+      id: IdGenerator.generate(),
+      score: formData.score,
+      type: formData.type,
+      description: formData.description,
+      date: formData.date,
+    );
+
+    _subjects[subjectIndex] = subject.copyWith(
+      grades: [...subject.grades, grade],
     );
     notifyListeners();
+    return true;
   }
 
-  void deleteGrade(int subjectId, int gradeId) {
-    final subject = _subjects.firstWhere((s) => s.id == subjectId);
-    subject.removeGrade(gradeId);
+  bool deleteGrade(int subjectId, int gradeId) {
+    final subjectIndex = _findSubjectIndex(subjectId);
+    if (subjectIndex == -1) {
+      return false;
+    }
+
+    final subject = _subjects[subjectIndex];
+    final updatedGrades = subject.grades
+        .where((grade) => grade.id != gradeId)
+        .toList(growable: false);
+
+    if (updatedGrades.length == subject.grades.length) {
+      return false;
+    }
+
+    _subjects[subjectIndex] = subject.copyWith(grades: updatedGrades);
     notifyListeners();
+    return true;
+  }
+
+  int _findSubjectIndex(int subjectId) {
+    return _subjects.indexWhere((subject) => subject.id == subjectId);
   }
 }

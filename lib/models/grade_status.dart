@@ -13,15 +13,7 @@ enum GradeStatus {
   final String label;
   final String shortLabel;
 
-  static const gradedValues = <GradeStatus>[
-    a,
-    b,
-    c,
-    d,
-    e,
-    fx,
-    f,
-  ];
+  static const gradedValues = <GradeStatus>[a, b, c, d, e, fx, f];
 
   static GradeStatus fromScore(double score) => switch (score) {
     >= 91 => a,
